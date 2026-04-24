@@ -60,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inicio de Sesion</title>
+  <link rel="shortcut icon" href="assets\acrivera_logo.png" type="image/x-icon">
   <style>
     * {
       box-sizing: border-box;
@@ -434,11 +435,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         clearInterval(intervalId);
       }
 
-      intervalId = setInterval(updateLoadingState, 900);
+      intervalId = setInterval(updateLoadingState, 5000);
 
       setTimeout(() => {
         loginForm.submit();
-      }, 900);
+      }, 5000);
     });
   </script>
 </body>
