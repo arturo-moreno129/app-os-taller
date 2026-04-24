@@ -1,3 +1,16 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['ususario'])) {
+  header('Location: index.php');
+  exit();
+}
+
+$nombreUsuario = trim(($_SESSION['nombre'] ?? '') . ' ' . ($_SESSION['apellidoP'] ?? ''));
+if ($nombreUsuario === '') {
+  $nombreUsuario = $_SESSION['ususario'];
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -23,6 +36,15 @@
         <div class="time" id="time">10:24 AM</div>
         <div class="date" id="date">21/05/2024</div>
       </div>
+    </div>
+
+    <div class="session-header">
+      <div class="session-user">
+        <span class="session-label">Sesion activa</span>
+        <strong><?= htmlspecialchars($nombreUsuario, ENT_QUOTES, 'UTF-8') ?></strong>
+      </div>
+
+      <a class="logout-button" href="logout.php">Cerrar sesion</a>
     </div>
 
     <div class="bays">
