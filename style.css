@@ -5,31 +5,47 @@
     font-family: Arial, sans-serif;
 }
 
+:root {
+    --page-gap: 20px;
+    --panel-gap: 18px;
+    --panel-radius: 18px;
+    --dashboard-padding: 18px;
+    --title-size: 32px;
+    --time-size: 34px;
+    --card-os-size: 30px;
+    --body-text-size: 16px;
+    --person-name-size: 24px;
+}
+
 body {
     background: #0a1220;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
     min-height: 100vh;
-    padding: 20px;
+    padding: var(--page-gap);
 }
 
 .dashboard {
     width: 100%;
-    max-width: 1400px;
+    max-width: 1920px;
     background: #07111d;
     border: 4px solid #111;
-    border-radius: 18px;
-    padding: 18px;
+    border-radius: var(--panel-radius);
+    padding: var(--dashboard-padding);
     color: white;
     box-shadow: 0 15px 40px rgba(0, 0, 0, .4);
+    min-height: calc(100vh - (var(--page-gap) * 2));
+    display: flex;
+    flex-direction: column;
 }
 
 .top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 18px;
+    gap: var(--panel-gap);
+    margin-bottom: var(--panel-gap);
 }
 
 .session-header {
@@ -37,7 +53,7 @@ body {
     justify-content: space-between;
     align-items: center;
     gap: 16px;
-    margin-bottom: 18px;
+    margin-bottom: var(--panel-gap);
     padding: 16px 18px;
     border: 1px solid #18314d;
     border-radius: 16px;
@@ -93,7 +109,7 @@ body {
 }
 
 .title h1 {
-    font-size: 32px;
+    font-size: var(--title-size);
     font-weight: bold;
     text-transform: uppercase;
 }
@@ -110,10 +126,11 @@ body {
     border-radius: 14px;
     padding: 14px 22px;
     text-align: right;
+    flex-shrink: 0;
 }
 
 .clock .time {
-    font-size: 34px;
+    font-size: var(--time-size);
     font-weight: bold;
 }
 
@@ -125,7 +142,8 @@ body {
 .bays {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
+    gap: var(--panel-gap);
+    flex: 1;
 }
 
 .bay {
@@ -133,7 +151,7 @@ body {
     border-radius: 14px;
     overflow: hidden;
     color: #222;
-    min-height: 520px;
+    min-height: 0;
     display: flex;
     flex-direction: column;
 }
@@ -145,7 +163,31 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
     font-size: 18px;
+    flex-wrap: wrap;
+}
+
+.bay-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bay-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+.bay-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    fill: #ffffff;
 }
 
 .blue {
@@ -167,7 +209,7 @@ body {
 .badge {
     background: rgba(255, 255, 255, .9);
     color: #222;
-    padding: 6px 12px;
+    padding: 6px 10px;
     border-radius: 20px;
     font-size: 13px;
     font-weight: bold;
@@ -179,15 +221,17 @@ body {
 }
 
 .os {
-    font-size: 28px;
+    font-size: var(--card-os-size);
     font-weight: bold;
     margin-bottom: 12px;
+    color: #13233a;
 }
 
 .info {
-    font-size: 14px;
-    line-height: 1.9;
-    color: #444;
+    font-size: var(--body-text-size);
+    line-height: 1.75;
+    color: #2f3f56;
+    font-weight: 500;
 }
 
 .available {
@@ -199,10 +243,10 @@ body {
 }
 
 .footer {
-    margin-top: 18px;
+    margin-top: var(--panel-gap);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
+    gap: var(--panel-gap);
 }
 
 .person {
@@ -213,6 +257,7 @@ body {
     display: flex;
     align-items: center;
     gap: 14px;
+    min-width: 0;
 }
 
 .avatar {
@@ -224,6 +269,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 24px;
+    flex-shrink: 0;
 }
 
 .person h3 {
@@ -233,9 +279,145 @@ body {
 }
 
 .person p {
-    font-size: 24px;
+    font-size: var(--person-name-size);
     font-weight: bold;
     margin-top: 4px;
+    line-height: 1.2;
+    word-break: break-word;
+}
+
+@media (min-width: 1600px), (min-width: 1400px) and (max-height: 820px) {
+    :root {
+        --page-gap: 8px;
+        --panel-gap: 8px;
+        --dashboard-padding: 10px;
+        --title-size: 22px;
+        --time-size: 26px;
+        --card-os-size: 24px;
+        --body-text-size: 13px;
+        --person-name-size: 18px;
+    }
+
+    .dashboard {
+        border-width: 2px;
+    }
+
+    .info {
+        line-height: 1.5;
+    }
+
+    .available {
+        padding: 10px;
+    }
+
+    .session-header {
+        padding: 12px 14px;
+    }
+
+    .session-label {
+        font-size: 11px;
+    }
+
+    .session-user strong {
+        font-size: 18px;
+    }
+
+    .title-box {
+        gap: 12px;
+    }
+
+    .title-box .icon {
+        font-size: 28px;
+    }
+
+    .title p {
+        font-size: 13px;
+    }
+
+    .clock {
+        padding: 10px 16px;
+    }
+
+    .clock .date {
+        font-size: 14px;
+    }
+
+    .bay-header {
+        padding: 10px 12px;
+        font-size: 16px;
+    }
+
+    .bay-title {
+        gap: 8px;
+    }
+
+    .bay-icon {
+        width: 22px;
+        height: 22px;
+    }
+
+    .badge {
+        font-size: 12px;
+    }
+
+    .card {
+        padding: 12px;
+    }
+
+    .available {
+        font-size: 13px;
+    }
+
+    .person {
+        padding: 12px 14px;
+        gap: 10px;
+    }
+
+    .avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+    }
+
+    .person h3 {
+        font-size: 13px;
+    }
+}
+
+@media (max-height: 760px) and (min-width: 1400px) {
+    .top-bar {
+        align-items: flex-start;
+    }
+
+    .bays {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .card {
+        padding: 10px;
+    }
+
+    .bay-header {
+        padding: 9px 10px;
+    }
+
+    .footer {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .person {
+        padding: 10px 12px;
+    }
+}
+
+@media (max-width: 1500px) {
+    .bays {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 1100px) {
@@ -270,5 +452,9 @@ body {
 
     .logout-button {
         width: 100%;
+    }
+
+    .dashboard {
+        min-height: auto;
     }
 }

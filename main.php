@@ -50,7 +50,7 @@ if ($nombreUsuario === '') {
 
     <div class="bays">
       <div class="bay">
-        <div class="bay-header blue">BAHÍA 1 <span class="badge">2 UNIDADES</span></div>
+        <div class="bay-header blue"><span class="bay-title"><span class="bay-icon" aria-hidden="true"><svg viewBox="0 0 64 64" focusable="false"><path d="M18 42a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm28 0a5 5 0 1 0 0 10 5 5 0 0 0 0-10ZM14 39h36l-2.8-14a6 6 0 0 0-5.9-4.8H22.7a6 6 0 0 0-5.9 4.8L14 39Zm41.8-1.3-3.2-15.9A10 10 0 0 0 42.8 14H21.2a10 10 0 0 0-9.8 7.8L8.2 37.7A4 4 0 0 0 12.1 42H13a9 9 0 0 0 10 8 9 9 0 0 0 18 0h10a9 9 0 0 0 10-8h.9a4 4 0 0 0 3.9-4.3ZM21 18h22l3.2 16H17.8L21 18Z" /></svg></span>BAHÍA 1</span> <span class="badge">2 UNIDADES</span></div>
         <div class="card">
           <div class="os">OS-12458</div>
           <div class="info">📅 21/05/2024 &nbsp;&nbsp; 🕒 08:15<br>👤 Cliente: Juan Pérez<br>📝 Motivo: Servicio de 10,000 km<br>🔧 Técnico: Carlos López</div>
@@ -64,7 +64,7 @@ if ($nombreUsuario === '') {
       </div>
 
       <div class="bay">
-        <div class="bay-header green">BAHÍA 2 <span class="badge">2 UNIDADES</span></div>
+        <div class="bay-header green"><span class="bay-title"><span class="bay-icon" aria-hidden="true"><svg viewBox="0 0 64 64" focusable="false"><path d="M18 42a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm28 0a5 5 0 1 0 0 10 5 5 0 0 0 0-10ZM14 39h36l-2.8-14a6 6 0 0 0-5.9-4.8H22.7a6 6 0 0 0-5.9 4.8L14 39Zm41.8-1.3-3.2-15.9A10 10 0 0 0 42.8 14H21.2a10 10 0 0 0-9.8 7.8L8.2 37.7A4 4 0 0 0 12.1 42H13a9 9 0 0 0 10 8 9 9 0 0 0 18 0h10a9 9 0 0 0 10-8h.9a4 4 0 0 0 3.9-4.3ZM21 18h22l3.2 16H17.8L21 18Z" /></svg></span>BAHÍA 2</span> <span class="badge">2 UNIDADES</span></div>
         <div class="card">
           <div class="os">OS-12460</div>
           <div class="info">📅 21/05/2024 &nbsp;&nbsp; 🕒 08:30<br>👤 Cliente: Pedro Ramírez<br>📝 Motivo: Frenos - Revisión<br>🔧 Técnico: Ana Torres</div>
@@ -77,7 +77,7 @@ if ($nombreUsuario === '') {
       </div>
 
       <div class="bay">
-        <div class="bay-header orange">BAHÍA 3 <span class="badge">2 UNIDADES</span></div>
+        <div class="bay-header orange"><span class="bay-title"><span class="bay-icon" aria-hidden="true"><svg viewBox="0 0 64 64" focusable="false"><path d="M18 42a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm28 0a5 5 0 1 0 0 10 5 5 0 0 0 0-10ZM14 39h36l-2.8-14a6 6 0 0 0-5.9-4.8H22.7a6 6 0 0 0-5.9 4.8L14 39Zm41.8-1.3-3.2-15.9A10 10 0 0 0 42.8 14H21.2a10 10 0 0 0-9.8 7.8L8.2 37.7A4 4 0 0 0 12.1 42H13a9 9 0 0 0 10 8 9 9 0 0 0 18 0h10a9 9 0 0 0 10-8h.9a4 4 0 0 0 3.9-4.3ZM21 18h22l3.2 16H17.8L21 18Z" /></svg></span>BAHÍA 3</span> <span class="badge">2 UNIDADES</span></div>
         <div class="card">
           <div class="os">OS-12462</div>
           <div class="info">📅 21/05/2024 &nbsp;&nbsp; 🕒 09:00<br>👤 Cliente: Roberto Díaz<br>📝 Motivo: Suspensión - Revisión<br>🔧 Técnico: Miguel Vela</div>
@@ -90,7 +90,7 @@ if ($nombreUsuario === '') {
       </div>
 
       <div class="bay">
-        <div class="bay-header purple">BAHÍA 4 <span class="badge">1 UNIDAD</span></div>
+        <div class="bay-header purple"><span class="bay-title"><span class="bay-icon" aria-hidden="true"><svg viewBox="0 0 64 64" focusable="false"><path d="M18 42a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm28 0a5 5 0 1 0 0 10 5 5 0 0 0 0-10ZM14 39h36l-2.8-14a6 6 0 0 0-5.9-4.8H22.7a6 6 0 0 0-5.9 4.8L14 39Zm41.8-1.3-3.2-15.9A10 10 0 0 0 42.8 14H21.2a10 10 0 0 0-9.8 7.8L8.2 37.7A4 4 0 0 0 12.1 42H13a9 9 0 0 0 10 8 9 9 0 0 0 18 0h10a9 9 0 0 0 10-8h.9a4 4 0 0 0 3.9-4.3ZM21 18h22l3.2 16H17.8L21 18Z" /></svg></span>BAHÍA 4</span> <span class="badge">1 UNIDAD</span></div>
         <div class="card">
           <div class="os">OS-12464</div>
           <div class="info">📅 21/05/2024 &nbsp;&nbsp; 🕒 09:20<br>👤 Cliente: Carlos Molina<br>📝 Motivo: Eléctrico - Revisión<br>🔧 Técnico: Diego Herrera</div>
@@ -127,6 +127,6 @@ if ($nombreUsuario === '') {
   </div>
 </body>
 <footer>
-  <script src="script.js"></script>
+  <script src="script.js?v=<?= urlencode((string) filemtime(__DIR__ . '/script.js')) ?>"></script>
 </footer>
 </html>
