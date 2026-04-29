@@ -23,6 +23,8 @@ if ($nombreUsuario === '') {
 </head>
 
 <body>
+  <?php include __DIR__ . '/header.php'; ?>
+
   <div class="dashboard">
     <div class="session-header">
       <div class="session-user">
@@ -35,6 +37,11 @@ if ($nombreUsuario === '') {
 
     <div class="top-bar">
       <div class="title-box">
+        <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="sideMenu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
         <div class="icon">🔧🚗</div>
         <div class="title">
           <h1>MONITOREO DE UNIDADES EN TALLER</h1>
@@ -156,9 +163,7 @@ if ($nombreUsuario === '') {
       </div>
     </div>
   </div>
+  <?php include __DIR__ . '/footer.php'; ?>
 </body>
-<footer>
-  <script src="script.js?v=<?= urlencode((string) filemtime(__DIR__ . '/script.js')) ?>"></script>
-</footer>
 
 </html>

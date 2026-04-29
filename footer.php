@@ -1,0 +1,1 @@
+<script src="script.js?v=<?= urlencode((string) filemtime(__DIR__ . '/script.js')) ?>"></script>

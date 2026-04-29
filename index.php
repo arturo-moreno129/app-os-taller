@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (defined('NO_DB_ACCESS') || !$con) {
       $errorMessage = 'No fue posible conectar con la base de datos.';
     } else {
-      $query = "SELECT * FROM usuario WHERE usuario = ? AND estatus = 'Activo' LIMIT 1";
+      $query = "SELECT * FROM usuarios WHERE usuario = ? AND estatus = 'Activo' LIMIT 1";
       $stmt = mysqli_prepare($con, $query);
 
       if ($stmt) {

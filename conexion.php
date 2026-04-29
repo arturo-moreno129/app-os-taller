@@ -16,7 +16,7 @@
 mysqli_report(MYSQLI_REPORT_OFF); // Desactiva los errores fatales de MySQLi
 
 $dbHost = '140.240.13.200';
-$dbName = 'bd_acrivera';
+$dbName = 'BD_Monitoreo_OS';
 $dbUser = 'root';
 $dbPass = "Benito290496$";
 
