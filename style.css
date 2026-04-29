@@ -796,7 +796,7 @@ body.login-page .login-card {
 }
 
 .clock-box {
-    min-width: 170px;
+    min-width: 220px;
     padding: 14px 18px;
     border-radius: 14px;
     background: #0d1d30;
@@ -807,6 +807,7 @@ body.login-page .login-card {
 .clock-box .time {
     font-size: 30px;
     font-weight: 700;
+    white-space: nowrap;
 }
 
 .clock-box .date {
