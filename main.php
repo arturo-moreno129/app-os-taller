@@ -147,17 +147,17 @@ if ($nombreUsuario === '') {
       </div>
 
       <div class="person">
-        <div class="avatar" style="background:#16a34a;">👤</div>
+        <div class="avatar avatar--green">👤</div>
         <div>
-          <h3 style="color:#6ee7a8;">Gerente</h3>
+          <h3 class="person-title person-title--green">Gerente</h3>
           <p>Ruben Velez Perez</p>
         </div>
       </div>
 
       <div class="person">
-        <div class="avatar" style="background:#7c3aed;">👤</div>
+        <div class="avatar avatar--purple">👤</div>
         <div>
-          <h3 style="color:#d8b4fe;">Dir. Post Venta</h3>
+          <h3 class="person-title person-title--purple">Dir. Post Venta</h3>
           <p>Manuel A. Urtiz Leon</p>
         </div>
       </div>
