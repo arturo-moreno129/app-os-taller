@@ -105,88 +105,170 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Alta de Usuario</title>
   <link rel="shortcut icon" href="assets/acrivera_logo.png" type="image/x-icon">
+  <link rel="stylesheet" href="style.css" />
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Arial, sans-serif;
     }
 
     body {
       min-height: 100vh;
-      background: linear-gradient(145deg, #08111f, #10233f 55%, #0c1728);
+      background:
+        radial-gradient(circle at top, rgba(30, 111, 255, 0.16), transparent 32%),
+        linear-gradient(180deg, #08111f, #0a1728 55%, #07111d);
       color: #f8fbff;
-      padding: 24px;
+      padding: 20px;
     }
 
     .page {
-      max-width: 1140px;
+      max-width: 1380px;
       margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .top-card,
+    .panel,
+    .list-card {
+      background: rgba(8, 21, 35, 0.96);
+      border: 1px solid #18314d;
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+    }
+
+    .top-card {
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .top-card__user span,
+    .section-eyebrow {
+      display: block;
+      color: #7ec4ff;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 6px;
+    }
+
+    .top-card__user strong {
+      font-size: 28px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      color: #fff;
+      border: 1px solid transparent;
+    }
+
+    .action-link.secondary {
+      background: #0f2137;
+      border-color: #18314d;
+    }
+
+    .action-link.primary {
+      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, .95fr);
+      gap: 18px;
+      align-items: start;
     }
 
     .panel {
-      display: grid;
-      gap: 18px;
+      padding: 24px;
     }
 
     .panel-header {
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
-      align-items: center;
-      gap: 16px;
+      align-items: flex-start;
+      gap: 14px;
       margin-bottom: 20px;
     }
 
-    .panel-header h1 {
-      font-size: 28px;
-      letter-spacing: 0.04em;
+    .panel-header h1,
+    .list-card h2 {
+      font-size: 30px;
+      margin-bottom: 6px;
     }
 
-    .panel-header .user-label {
-      color: #a5b4fc;
-      font-size: 14px;
+    .panel-header p,
+    .list-card p,
+    .success-message,
+    .error-message,
+    .schema-note {
+      color: #c8dbff;
+      line-height: 1.55;
     }
 
-    .form-card,
-    .info-card {
-      background: rgba(7, 16, 29, 0.94);
-      border: 1px solid rgba(148, 197, 255, 0.18);
-      border-radius: 24px;
-      padding: 28px;
-      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.3);
+    .clock-box {
+      min-width: 170px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      background: #0d1d30;
+      border: 1px solid #204164;
+      text-align: right;
     }
 
-    .form-card h2,
-    .info-card h2 {
+    .clock-box .time {
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .clock-box .date {
+      font-size: 15px;
+      color: #d8e8ff;
+    }
+
+    .success-message,
+    .error-message,
+    .schema-note {
       margin-bottom: 18px;
-      font-size: 22px;
+      padding: 14px 16px;
+      border-radius: 14px;
     }
 
-    .message {
-      margin-bottom: 18px;
-      padding: 14px 17px;
-      border-radius: 16px;
-      font-size: 14px;
+    .success-message {
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.28);
     }
 
-    .message.success {
-      background: rgba(34, 197, 94, 0.16);
-      border: 1px solid rgba(34, 197, 94, 0.35);
-      color: #d1fae5;
+    .error-message {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.28);
+      color: #ffd1d1;
     }
 
-    .message.error {
-      background: rgba(248, 113, 113, 0.16);
-      border: 1px solid rgba(248, 113, 113, 0.35);
-      color: #fecaca;
+    .schema-note {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.28);
     }
 
     .form-grid {
       display: grid;
-      gap: 18px;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
     }
 
     .field {
@@ -194,30 +276,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       gap: 8px;
     }
 
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
     .field label {
-      color: #cbd5e1;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
+      color: #dbeafe;
     }
 
     .field input,
-    .field select {
+    .field select,
+    .field textarea {
       width: 100%;
-      border: 1px solid rgba(148, 197, 255, 0.18);
+      border: 1px solid #24435f;
       border-radius: 14px;
-      padding: 12px 14px;
-      background: rgba(255, 255, 255, 0.06);
-      color: #f8fbff;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      padding: 14px 15px;
       font-size: 15px;
       outline: none;
-      transition: border-color .25s ease, box-shadow .25s ease;
+    }
+
+    .field select {
+      appearance: none;
+      background-color: #0f2137;
+      color: #ffffff;
+    }
+
+    .field select option {
+      background: #0f2137;
+      color: #ffffff;
+    }
+
+    .field textarea {
+      min-height: 110px;
+      resize: vertical;
     }
 
     .field input:focus,
-    .field select:focus {
-      border-color: rgba(56, 189, 248, 0.7);
-      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.16);
-      background: rgba(255, 255, 255, 0.08);
+    .field select:focus,
+    .field textarea:focus {
+      border-color: #4aa3ff;
+      box-shadow: 0 0 0 4px rgba(74, 163, 255, 0.12);
+    }
+
+    .helper-text {
+      font-size: 13px;
+      color: #9db8dd;
+    }
+
+    .form-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .button.secondary {
+      background: #0f2137;
+      color: #fff;
+      border: 1px solid #204164;
+    }
+
+    .button.primary {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      color: #fff;
     }
 
     .submit-row {
@@ -246,30 +381,91 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       color: #cbd5e1;
       line-height: 1.7;
     }
+
+    .list-card {
+      padding: 24px;
+    }
+
+    .list-card p {
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 1100px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .top-card,
+      .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-actions {
+        justify-content: stretch;
+        flex-direction: column;
+      }
+
+      .button,
+      .action-link,
+      .clock-box {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 
 <body>
+  <?php include __DIR__ . '/header.php'; ?>
   <div class="page">
-    <div class="panel-header">
-      <div>
-        <h1>Alta de nuevo usuario</h1>
-        <p class="user-label">Usuario conectado: <?= htmlspecialchars($nombreUsuario, ENT_QUOTES, 'UTF-8') ?></p>
+    <div class="top-card">
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="sideMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="top-card__user">
+        <span>Sesion activa</span>
+        <strong><?= htmlspecialchars($nombreUsuario, ENT_QUOTES, 'UTF-8') ?></strong>
+      </div>
+
+      <div class="actions">
+        <a class="action-link secondary" href="main.php">Volver al tablero</a>
+        <a class="action-link primary" href="logout.php">Cerrar sesion</a>
       </div>
     </div>
 
-    <?php if ($successMessage !== ''): ?>
-      <div class="message success"><?= htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8') ?></div>
-    <?php endif; ?>
+    <div class="layout">
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <span class="section-eyebrow">Registro</span>
+            <h1>Alta de usuario</h1>
+            <p>Captura los datos para crear un nuevo usuario en el sistema.</p>
+          </div>
 
-    <?php if ($errorMessage !== ''): ?>
-      <div class="message error"><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?></div>
-    <?php endif; ?>
+          <div class="clock-box">
+            <div id="time" class="time"></div>
+            <div id="date" class="date"></div>
+          </div>
+        </div>
 
-    <div class="form-card">
-      <h2>Datos del usuario</h2>
-      <form method="post" action="alta_usuario.php">
-        <div class="form-grid">
+        <?php if ($successMessage !== ''): ?>
+          <div class="success-message"><?= htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8') ?></div>
+        <?php endif; ?>
+
+        <?php if ($errorMessage !== ''): ?>
+          <div class="error-message"><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?></div>
+        <?php endif; ?>
+
+        <form method="post" action="alta_usuario.php" class="form-grid">
           <div class="field">
             <label for="usuario">Usuario *</label>
             <input type="text" id="usuario" name="usuario" placeholder="Nombre de usuario" value="<?= htmlspecialchars($formValues['usuario'], ENT_QUOTES, 'UTF-8') ?>" required>
@@ -322,19 +518,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <?php endforeach; ?>
             </select>
           </div>
-        </div>
 
-        <div class="submit-row">
-          <button type="submit" class="submit-button">Guardar usuario</button>
-        </div>
-      </form>
-    </div>
+          <div class="form-actions">
+            <a class="action-link secondary" href="main.php">Cancelar</a>
+            <button class="button primary" type="submit">Guardar usuario</button>
+          </div>
+        </form>
+      </section>
 
-    <div class="info-card">
-      <h2>Notas</h2>
-      <p>Los campos marcados con * son obligatorios. El usuario se crea con estatus activo por defecto.</p>
+      <aside class="list-card">
+        <span class="section-eyebrow">Notas</span>
+        <h2>Detalle</h2>
+        <p>Los campos marcados con * son obligatorios. El usuario se crea con estatus activo por defecto.</p>
+        <div class="schema-note">
+          Esta pantalla usa un diseño equivalente al alta de bahias: formulario a la izquierda y tarjeta informativa a la derecha.
+        </div>
+      </aside>
     </div>
   </div>
+  <?php include __DIR__ . '/footer.php'; ?>
 </body>
 
 </html>

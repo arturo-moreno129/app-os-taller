@@ -1,15 +1,24 @@
+const timeElement = document.getElementById('time');
+const dateElement = document.getElementById('date');
+
 function updateClock() {
+    if (!timeElement || !dateElement) {
+        return;
+    }
+
     const now = new Date();
-    document.getElementById('time').textContent = now.toLocaleTimeString('es-MX', {
+    timeElement.textContent = now.toLocaleTimeString('es-MX', {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit'
     });
-    document.getElementById('date').textContent = now.toLocaleDateString('es-MX');
+    dateElement.textContent = now.toLocaleDateString('es-MX');
 }
 
-updateClock();
-setInterval(updateClock, 1000);
+if (timeElement && dateElement) {
+    updateClock();
+    setInterval(updateClock, 1000);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.getElementById('menuToggle') || document.querySelector('.menu-toggle');
