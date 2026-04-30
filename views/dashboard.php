@@ -1,16 +1,4 @@
-<?php
-session_start();
-
-if (!isset($_SESSION['ususario'])) {
-  header('Location: index.php');
-  exit();
-}
-
-$nombreUsuario = trim(($_SESSION['nombre'] ?? '') . ' ' . ($_SESSION['apellidoP'] ?? ''));
-if ($nombreUsuario === '') {
-  $nombreUsuario = $_SESSION['ususario'];
-}
-?>
+<?php /** @var string $nombreUsuario */ ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -23,7 +11,7 @@ if ($nombreUsuario === '') {
 </head>
 
 <body>
-  <?php include __DIR__ . '/header.php'; ?>
+  <?php include __DIR__ . '/../header.php'; ?>
 
   <div class="dashboard">
     <div class="session-header">
@@ -32,7 +20,7 @@ if ($nombreUsuario === '') {
         <strong><?= htmlspecialchars($nombreUsuario, ENT_QUOTES, 'UTF-8') ?></strong>
       </div>
 
-      <a class="logout-button" href="logout.php">Cerrar sesion</a>
+      <a class="logout-button" href="index.php?action=logout">Cerrar sesion</a>
     </div>
 
     <div class="top-bar">
@@ -163,7 +151,7 @@ if ($nombreUsuario === '') {
       </div>
     </div>
   </div>
-  <?php include __DIR__ . '/footer.php'; ?>
+  <?php include __DIR__ . '/../footer.php'; ?>
 </body>
 
 </html>

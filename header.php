@@ -10,12 +10,12 @@
   </div>
 
   <nav class="side-menu__nav" aria-label="Accesos principales">
-    <a class="side-menu__link" href="main.php">Panel principal</a>
-    <a class="side-menu__link" href="alta_bahias.php">Alta de bahias</a>
-    <a class="side-menu__link" href="alta_usuario.php">Alta de usuario</a>
+    <a class="side-menu__link" href="index.php?action=dashboard">Panel principal</a>
+    <a class="side-menu__link" href="index.php?action=alta_bahias">Alta de bahias</a>
+    <a class="side-menu__link" href="index.php?action=alta_usuario">Alta de usuario</a>
     <a class="side-menu__link" href="#">Ordenes de servicio</a>
     <a class="side-menu__link" href="#">Tecnicos</a>
     <a class="side-menu__link" href="#">Reportes</a>
-    <a class="side-menu__link" href="logout.php">Cerrar sesion</a>
+    <a class="side-menu__link" href="index.php?action=logout">Cerrar sesion</a>
   </nav>
 </aside>

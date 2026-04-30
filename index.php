@@ -1,162 +1,25 @@
 <?php
-session_start();
+require_once __DIR__ . '/controllers/LoginController.php';
+require_once __DIR__ . '/controllers/DashboardController.php';
+require_once __DIR__ . '/controllers/UserController.php';
+require_once __DIR__ . '/controllers/BahiaController.php';
+require_once __DIR__ . '/controllers/LogoutController.php';
 
-if (isset($_SESSION['ususario'])) {
-  header('Location: main.php');
-  exit();
+$action = $_GET['action'] ?? 'login';
+$routes = [
+    'login' => LoginController::class,
+    'dashboard' => DashboardController::class,
+    'alta_usuario' => UserController::class,
+    'alta_bahias' => BahiaController::class,
+    'logout' => LogoutController::class,
+];
+
+if (!isset($routes[$action])) {
+    http_response_code(404);
+    echo 'Página no encontrada';
+    exit();
 }
 
-$errorMessage = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $user = trim($_POST['usuario'] ?? '');
-  $pass = $_POST['password'] ?? '';
-
-  if ($user === '' || $pass === '') {
-    $errorMessage = 'Ingresa tu usuario y tu contrasena.';
-  } else {
-    $con = include __DIR__ . '/conexion.php';
-
-    if (defined('NO_DB_ACCESS') || !$con) {
-      $errorMessage = 'No fue posible conectar con la base de datos.';
-    } else {
-      $query = "SELECT * FROM usuarios WHERE usuario = ? AND estatus = 'Activo' LIMIT 1";
-      $stmt = mysqli_prepare($con, $query);
-
-      if ($stmt) {
-        mysqli_stmt_bind_param($stmt, 's', $user);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        $row = $result ? mysqli_fetch_assoc($result) : null;
-        mysqli_stmt_close($stmt);
-
-        if ($row && password_verify($pass, $row['contrasena'])) {
-          $_SESSION['id_usuario'] = $row['id_usuario'] ?? null;
-          $_SESSION['ususario'] = $row['usuario'] ?? '';
-          $_SESSION['nombre'] = $row['nombre'] ?? '';
-          $_SESSION['apellidoP'] = $row['apellidoP'] ?? '';
-          $_SESSION['apellidoM'] = $row['apellidoM'] ?? '';
-          $_SESSION['sexo'] = $row['sexo'] ?? '';
-          $_SESSION['puesto'] = $row['puesto'] ?? '';
-          $_SESSION['departamento'] = $row['departamento'] ?? '';
-          $_SESSION['rol'] = $row['rol'] ?? '';
-
-          header('Location: main.php');
-          exit();
-        }
-
-        $errorMessage = 'Usuario o contrasena incorrectos.';
-      } else {
-        $errorMessage = 'No se pudo validar el inicio de sesion.';
-      }
-    }
-  }
-}
-?>
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicio de Sesion</title>
-  <link rel="shortcut icon" href="assets\acrivera_logo.png" type="image/x-icon">
-  <link rel="stylesheet" href="style.css" />
-</head>
-
-<body class="login-page">
-  <main class="login-card">
-    <div class="shield">🔐</div>
-    <h1>Iniciar sesion</h1>
-    <p class="intro">Ingresa tu usuario y tu contrasena para acceder de forma segura al sistema.</p>
-
-    <?php if ($errorMessage !== ''): ?>
-      <div class="error-message"><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?></div>
-    <?php endif; ?>
-
-    <form class="login-form" id="loginForm" method="post" action="">
-      <div class="field">
-        <label for="usuario">Usuario</label>
-        <input type="text" id="usuario" name="usuario" placeholder="Escribe tu usuario" value="<?= htmlspecialchars($_POST['usuario'] ?? '', ENT_QUOTES, 'UTF-8') ?>" required>
-      </div>
-
-      <div class="field">
-        <label for="password">Contrasena</label>
-        <input type="password" id="password" name="password" placeholder="Escribe tu contrasena" required>
-      </div>
-
-      <button class="login-button" type="submit" id="loginButton">Entrar</button>
-    </form>
-
-    <section class="loading-panel" id="loadingPanel" aria-label="Proceso de inicio de sesion">
-      <div class="spinner" aria-hidden="true"></div>
-
-      <div class="progress-track" aria-hidden="true">
-        <div class="progress-bar"></div>
-      </div>
-
-      <div class="status">
-        <span class="status-dot"></span>
-        <span id="statusText">Conectando con el servidor...</span>
-      </div>
-
-      <section class="steps" aria-label="Pasos de inicio de sesion">
-        <div class="step active">1. Validando usuario</div>
-        <div class="step">2. Confirmando permisos</div>
-        <div class="step">3. Cargando entorno</div>
-      </section>
-    </section>
-  </main>
-
-  <script>
-    const messages = [
-      "Conectando con el servidor...",
-      "Validando credenciales...",
-      "Cargando configuracion del usuario...",
-      "Acceso listo."
-    ];
-
-    const loginForm = document.getElementById("loginForm");
-    const loadingPanel = document.getElementById("loadingPanel");
-    const loginButton = document.getElementById("loginButton");
-    const statusText = document.getElementById("statusText");
-    const steps = document.querySelectorAll(".step");
-    let currentStep = 0;
-    let intervalId = null;
-
-    const updateLoadingState = () => {
-      if (currentStep < messages.length) {
-        statusText.textContent = messages[currentStep];
-      }
-
-      steps.forEach((step, index) => {
-        step.classList.toggle("active", index <= currentStep && index < steps.length);
-      });
-
-      currentStep = (currentStep + 1) % messages.length;
-    };
-
-    loginForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      loginButton.disabled = true;
-      loginButton.textContent = "Iniciando...";
-      loadingPanel.classList.add("is-visible");
-
-      currentStep = 0;
-      updateLoadingState();
-
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-
-      intervalId = setInterval(updateLoadingState, 5000);
-
-      setTimeout(() => {
-        loginForm.submit();
-      }, 5000);
-    });
-  </script>
-</body>
-
-</html>
+$controllerName = $routes[$action];
+$controller = new $controllerName();
+$controller->index();

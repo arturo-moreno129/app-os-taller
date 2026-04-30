@@ -1,172 +1,9 @@
-<?php
-session_start();
-
-if (!isset($_SESSION['ususario'])) {
-  header('Location: index.php');
-  exit();
-}
-
-$nombreUsuario = trim(($_SESSION['nombre'] ?? '') . ' ' . ($_SESSION['apellidoP'] ?? ''));
-if ($nombreUsuario === '') {
-  $nombreUsuario = $_SESSION['ususario'];
-}
-$idUsuarioSesion = isset($_SESSION['id_usuario']) ? (int) $_SESSION['id_usuario'] : null;
-
-$con = include __DIR__ . '/conexion.php';
-$dbReady = !defined('NO_DB_ACCESS') && $con;
-$successMessage = '';
-$errorMessage = '';
-$tecnicos = [];
-$ultimosRegistros = [];
-$bahiasDisponibles = ['BAHIA 1', 'BAHIA 2', 'BAHIA 3', 'BAHIA 4'];
-
-$formValues = [
-  'nombre_bahia' => '',
-  'os' => '',
-  'estatus' => 'En operación',
-  'fecha' => '',
-  'hora' => '',
-  'cliente' => '',
-  'motivo' => '',
-  'id_tecnico' => ''
-];
-
-if ($dbReady) {
-  $tecnicosQuery = "SELECT id_tecnico, nombre, estatus, correo_corporativo FROM tecnicos ORDER BY nombre ASC";
-  $tecnicosResult = mysqli_query($con, $tecnicosQuery);
-
-  if ($tecnicosResult) {
-    while ($row = mysqli_fetch_assoc($tecnicosResult)) {
-      $tecnicos[] = $row;
-    }
-  }
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  foreach ($formValues as $field => $value) {
-    $formValues[$field] = trim($_POST[$field] ?? '');
-  }
-
-  if (!$dbReady) {
-    $errorMessage = 'No fue posible conectar con la base de datos.';
-  } elseif ($formValues['nombre_bahia'] === '' || $formValues['os'] === '' || $formValues['fecha'] === '' || $formValues['hora'] === '' || $formValues['cliente'] === '' || $formValues['id_tecnico'] === '') {
-    $errorMessage = 'Completa todos los campos obligatorios.';
-  } else {
-    mysqli_begin_transaction($con);
-
-    try {
-      $insertBahia = mysqli_prepare($con, "INSERT INTO bahias (nombre_bahia, os, fecha_ingreso, hora_ingreso, cliente, motivo, estatus, creado_por) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-
-      if (!$insertBahia) {
-        throw new Exception('No se pudo preparar el registro de bahia.');
-      }
-
-      mysqli_stmt_bind_param(
-        $insertBahia,
-        'sssssssi',
-        $formValues['nombre_bahia'],
-        $formValues['os'],
-        $formValues['fecha'],
-        $formValues['hora'],
-        $formValues['cliente'],
-        $formValues['motivo'],
-        $formValues['estatus'],
-        $idUsuarioSesion
-      );
-
-      if (!mysqli_stmt_execute($insertBahia)) {
-        throw new Exception('No se pudo guardar la bahia.');
-      }
-
-      $idBahia = mysqli_insert_id($con);
-      mysqli_stmt_close($insertBahia);
-
-      $idTecnico = (int) $formValues['id_tecnico'];
-
-      $insertAsignacion = mysqli_prepare($con, "INSERT INTO bahia_tecnico (id_bahia, id_tecnico, activo, asignado_por) VALUES (?, ?, 1, ?)");
-
-      if (!$insertAsignacion) {
-        throw new Exception('No se pudo preparar la asignacion del tecnico.');
-      }
-
-      mysqli_stmt_bind_param($insertAsignacion, 'iii', $idBahia, $idTecnico, $idUsuarioSesion);
-
-      if (!mysqli_stmt_execute($insertAsignacion)) {
-        throw new Exception('No se pudo asignar el tecnico.');
-      }
-
-      mysqli_stmt_close($insertAsignacion);
-
-      $nuevoEstatusTecnico = $formValues['estatus'] === 'En mantenimiento' ? 'Libre' : 'En operación';
-      $updateTecnico = mysqli_prepare($con, "UPDATE tecnicos SET estatus = ? WHERE id_tecnico = ?");
-
-      if (!$updateTecnico) {
-        throw new Exception('No se pudo actualizar el estatus del tecnico.');
-      }
-
-      mysqli_stmt_bind_param($updateTecnico, 'si', $nuevoEstatusTecnico, $idTecnico);
-
-      if (!mysqli_stmt_execute($updateTecnico)) {
-        throw new Exception('No se pudo actualizar el tecnico.');
-      }
-
-      mysqli_stmt_close($updateTecnico);
-
-      mysqli_commit($con);
-
-      $successMessage = 'Registro guardado correctamente en la base de datos.';
-      $formValues = [
-        'nombre_bahia' => '',
-        'os' => '',
-        'estatus' => 'En operación',
-        'fecha' => '',
-        'hora' => '',
-        'cliente' => '',
-        'motivo' => '',
-        'id_tecnico' => ''
-      ];
-    } catch (Exception $exception) {
-      mysqli_rollback($con);
-      $errorMessage = $exception->getMessage();
-    }
-  }
-}
-
-if ($dbReady) {
-  $ultimosQuery = "
-    SELECT
-      b.id_bahia,
-      b.nombre_bahia,
-      b.os,
-      b.fecha_ingreso,
-      b.hora_ingreso,
-      b.cliente,
-      b.motivo,
-      b.estatus,
-      t.nombre AS tecnico,
-      t.estatus AS estatus_tecnico,
-      CONCAT(COALESCE(u.nombre, ''), ' ', COALESCE(u.apellidoP, '')) AS creador
-    FROM bahias b
-    LEFT JOIN bahia_tecnico bt
-      ON bt.id_bahia = b.id_bahia
-      AND bt.activo = 1
-    LEFT JOIN tecnicos t
-      ON t.id_tecnico = bt.id_tecnico
-    LEFT JOIN usuarios u
-      ON u.id_usuario = b.creado_por
-    ORDER BY b.id_bahia DESC
-    LIMIT 5
-  ";
-
-  $ultimosResult = mysqli_query($con, $ultimosQuery);
-
-  if ($ultimosResult) {
-    while ($row = mysqli_fetch_assoc($ultimosResult)) {
-      $ultimosRegistros[] = $row;
-    }
-  }
-}
-?>
+<?php /** @var string $successMessage */ ?>
+<?php /** @var string $errorMessage */ ?>
+<?php /** @var array $formValues */ ?>
+<?php /** @var array $tecnicos */ ?>
+<?php /** @var array $ultimosRegistros */ ?>
+<?php /** @var string $nombreUsuario */ ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -179,7 +16,7 @@ if ($dbReady) {
 </head>
 
 <body class="module-page">
-  <?php include __DIR__ . '/header.php'; ?>
+  <?php include __DIR__ . '/../header.php'; ?>
   <div class="page">
     <div class="top-card">
       <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="sideMenu">
@@ -193,8 +30,8 @@ if ($dbReady) {
       </div>
 
       <div class="actions">
-        <a class="action-link secondary" href="main.php">Volver al tablero</a>
-        <a class="action-link primary" href="logout.php">Cerrar sesion</a>
+        <a class="action-link secondary" href="index.php?action=dashboard">Volver al tablero</a>
+        <a class="action-link primary" href="index.php?action=logout">Cerrar sesion</a>
       </div>
     </div>
 
@@ -226,12 +63,12 @@ if ($dbReady) {
           <div class="error-message"><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?></div>
         <?php endif; ?>
 
-        <form method="post" class="form-grid">
+        <form method="post" action="index.php?action=alta_bahias" class="form-grid">
           <div class="field">
             <label for="nombre_bahia">Nombre de la bahia</label>
             <select id="nombre_bahia" name="nombre_bahia" required>
               <option value="">Selecciona una bahia</option>
-              <?php foreach ($bahiasDisponibles as $bahiaDisponible): ?>
+              <?php foreach ($bahiasDisponibles = ['BAHIA 1', 'BAHIA 2', 'BAHIA 3', 'BAHIA 4'] as $bahiaDisponible): ?>
                 <option value="<?= htmlspecialchars($bahiaDisponible, ENT_QUOTES, 'UTF-8') ?>" <?= $formValues['nombre_bahia'] === $bahiaDisponible ? 'selected' : '' ?>>
                   <?= htmlspecialchars($bahiaDisponible, ENT_QUOTES, 'UTF-8') ?>
                 </option>
@@ -247,9 +84,9 @@ if ($dbReady) {
           <div class="field">
             <label for="estatus">Estatus de la bahia</label>
             <select id="estatus" name="estatus" required>
-              <option value="Disponible" <?= $formValues['estatus'] === 'Disponible' ? 'selected' : '' ?>>Disponible</option>
-              <option value="En operación" <?= $formValues['estatus'] === 'En operación' ? 'selected' : '' ?>>En operación</option>
-              <option value="En mantenimiento" <?= $formValues['estatus'] === 'En mantenimiento' ? 'selected' : '' ?>>En mantenimiento</option>
+              <?php foreach (['Disponible', 'En operación', 'En mantenimiento'] as $statusOption): ?>
+                <option value="<?= htmlspecialchars($statusOption, ENT_QUOTES, 'UTF-8') ?>" <?= $formValues['estatus'] === $statusOption ? 'selected' : '' ?>><?= htmlspecialchars($statusOption, ENT_QUOTES, 'UTF-8') ?></option>
+              <?php endforeach; ?>
             </select>
           </div>
 
@@ -287,7 +124,7 @@ if ($dbReady) {
           </div>
 
           <div class="form-actions">
-            <a class="action-link secondary" href="main.php">Cancelar</a>
+            <a class="action-link secondary" href="index.php?action=dashboard">Cancelar</a>
             <button class="button primary" type="submit">Guardar registro</button>
           </div>
         </form>
@@ -328,7 +165,7 @@ if ($dbReady) {
     </div>
   </div>
 
-  <?php include __DIR__ . '/footer.php'; ?>
+  <?php include __DIR__ . '/../footer.php'; ?>
 </body>
 
 </html>

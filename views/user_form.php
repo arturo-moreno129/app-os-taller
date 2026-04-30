@@ -1,102 +1,7 @@
-<?php
-session_start();
-
-if (!isset($_SESSION['ususario'])) {
-  header('Location: index.php');
-  exit();
-}
-
-$nombreUsuario = trim(($_SESSION['nombre'] ?? '') . ' ' . ($_SESSION['apellidoP'] ?? ''));
-if ($nombreUsuario === '') {
-  $nombreUsuario = $_SESSION['ususario'];
-}
-
-$con = include __DIR__ . '/conexion.php';
-$dbReady = !defined('NO_DB_ACCESS') && $con;
-$successMessage = '';
-$errorMessage = '';
-
-$formValues = [
-  'usuario' => '',
-  'contrasena' => '',
-  'nombre' => '',
-  'apellidoP' => '',
-  'apellidoM' => '',
-  'sexo' => 'Masculino',
-  'puesto' => '',
-  'departamento' => '',
-  'rol' => 'Usuario'
-];
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  foreach ($formValues as $field => $value) {
-    $formValues[$field] = trim($_POST[$field] ?? '');
-  }
-
-  if (!$dbReady) {
-    $errorMessage = 'No fue posible conectar con la base de datos.';
-  } elseif ($formValues['usuario'] === '' || $formValues['contrasena'] === '' || $formValues['nombre'] === '' || $formValues['apellidoP'] === '' || $formValues['puesto'] === '' || $formValues['departamento'] === '' || $formValues['rol'] === '') {
-    $errorMessage = 'Completa todos los campos obligatorios.';
-  } else {
-    $checkUser = mysqli_prepare($con, "SELECT id_usuario FROM usuarios WHERE usuario = ? LIMIT 1");
-
-    if ($checkUser) {
-      mysqli_stmt_bind_param($checkUser, 's', $formValues['usuario']);
-      mysqli_stmt_execute($checkUser);
-      mysqli_stmt_store_result($checkUser);
-      $userExists = mysqli_stmt_num_rows($checkUser) > 0;
-      mysqli_stmt_close($checkUser);
-
-      if ($userExists) {
-        $errorMessage = 'El nombre de usuario ya existe. Elige otro diferente.';
-      } else {
-        $hash = password_hash($formValues['contrasena'], PASSWORD_DEFAULT);
-
-        $insertUser = mysqli_prepare($con, "INSERT INTO usuarios (usuario, contrasena, nombre, apellidoP, apellidoM, sexo, puesto, departamento, rol, estatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Activo')");
-
-        if ($insertUser) {
-          mysqli_stmt_bind_param(
-            $insertUser,
-            'sssssssss',
-            $formValues['usuario'],
-            $hash,
-            $formValues['nombre'],
-            $formValues['apellidoP'],
-            $formValues['apellidoM'],
-            $formValues['sexo'],
-            $formValues['puesto'],
-            $formValues['departamento'],
-            $formValues['rol']
-          );
-
-          if (mysqli_stmt_execute($insertUser)) {
-            $successMessage = 'Usuario creado correctamente.';
-            $formValues = [
-              'usuario' => '',
-              'contrasena' => '',
-              'nombre' => '',
-              'apellidoP' => '',
-              'apellidoM' => '',
-              'sexo' => 'Masculino',
-              'puesto' => '',
-              'departamento' => '',
-              'rol' => 'Usuario'
-            ];
-          } else {
-            $errorMessage = 'No se pudo guardar el usuario en la base de datos.';
-          }
-
-          mysqli_stmt_close($insertUser);
-        } else {
-          $errorMessage = 'No se pudo preparar la inserción del usuario.';
-        }
-      }
-    } else {
-      $errorMessage = 'No se pudo verificar si el usuario existe.';
-    }
-  }
-}
-?>
+<?php /** @var string $successMessage */ ?>
+<?php /** @var string $errorMessage */ ?>
+<?php /** @var array $formValues */ ?>
+<?php /** @var string $nombreUsuario */ ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -109,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body class="module-page">
-  <?php include __DIR__ . '/header.php'; ?>
+  <?php include __DIR__ . '/../header.php'; ?>
   <div class="page">
     <div class="top-card">
       <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="sideMenu">
@@ -124,8 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
 
       <div class="actions">
-        <a class="action-link secondary" href="main.php">Volver al tablero</a>
-        <a class="action-link primary" href="logout.php">Cerrar sesion</a>
+        <a class="action-link secondary" href="index.php?action=dashboard">Volver al tablero</a>
+        <a class="action-link primary" href="index.php?action=logout">Cerrar sesion</a>
       </div>
     </div>
 
@@ -152,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="error-message"><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?></div>
         <?php endif; ?>
 
-        <form method="post" action="alta_usuario.php" class="form-grid">
+        <form method="post" action="index.php?action=alta_usuario" class="form-grid">
           <div class="field">
             <label for="usuario">Usuario *</label>
             <input type="text" id="usuario" name="usuario" placeholder="Nombre de usuario" value="<?= htmlspecialchars($formValues['usuario'], ENT_QUOTES, 'UTF-8') ?>" required>
@@ -207,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
 
           <div class="form-actions">
-            <a class="action-link secondary" href="main.php">Cancelar</a>
+            <a class="action-link secondary" href="index.php?action=dashboard">Cancelar</a>
             <button class="button primary" type="submit">Guardar usuario</button>
           </div>
         </form>
@@ -223,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </aside>
     </div>
   </div>
-  <?php include __DIR__ . '/footer.php'; ?>
+  <?php include __DIR__ . '/../footer.php'; ?>
 </body>
 
 </html>
