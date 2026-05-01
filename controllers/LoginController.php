@@ -6,7 +6,6 @@ class LoginController extends Controller
 {
     public function index(): void
     {
-        session_start();
 
         if (isset($_SESSION['ususario'])) {
             $this->redirect('index.php?action=dashboard');
@@ -14,31 +13,40 @@ class LoginController extends Controller
 
         $errorMessage = '';
 
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $user = trim($_POST['usuario'] ?? '');
-            $pass = $_POST['password'] ?? '';
-
-            if ($user === '' || $pass === '') {
-                $errorMessage = 'Ingresa tu usuario y tu contrasena.';
+            if (!$this->validateCsrfToken($_POST['csrf_token'] ?? null)) {
+                $errorMessage = 'Token de seguridad inválido.';
             } else {
-                $userModel = new User();
-                $row = $userModel->authenticate($user, $pass);
+                $user = trim($_POST['usuario'] ?? '');
+                $pass = $_POST['password'] ?? '';
 
-                if ($row) {
-                    $_SESSION['id_usuario'] = $row['id_usuario'] ?? null;
-                    $_SESSION['ususario'] = $row['usuario'] ?? '';
-                    $_SESSION['nombre'] = $row['nombre'] ?? '';
-                    $_SESSION['apellidoP'] = $row['apellidoP'] ?? '';
-                    $_SESSION['apellidoM'] = $row['apellidoM'] ?? '';
-                    $_SESSION['sexo'] = $row['sexo'] ?? '';
-                    $_SESSION['puesto'] = $row['puesto'] ?? '';
-                    $_SESSION['departamento'] = $row['departamento'] ?? '';
-                    $_SESSION['rol'] = $row['rol'] ?? '';
+                if ($user === '' || $pass === '') {
+                    $errorMessage = 'Ingresa tu usuario y tu contrasena.';
+                } else {
+                    $userModel = new User();
+                    $row = $userModel->authenticate($user, $pass);
 
-                    $this->redirect('index.php?action=dashboard');
+                    if ($row) {
+                        session_regenerate_id(true);
+                        $_SESSION['id_usuario'] = $row['id_usuario'] ?? null;
+                        $_SESSION['ususario'] = $row['usuario'] ?? '';
+                        $_SESSION['nombre'] = $row['nombre'] ?? '';
+                        $_SESSION['apellidoP'] = $row['apellidoP'] ?? '';
+                        $_SESSION['apellidoM'] = $row['apellidoM'] ?? '';
+                        $_SESSION['sexo'] = $row['sexo'] ?? '';
+                        $_SESSION['puesto'] = $row['puesto'] ?? '';
+                        $_SESSION['departamento'] = $row['departamento'] ?? '';
+                        $_SESSION['rol'] = $row['rol'] ?? '';
+
+                        $this->redirect('index.php?action=dashboard');
+                    }
+
+                    $errorMessage = 'Usuario o contrasena incorrectos.';
                 }
-
-                $errorMessage = 'Usuario o contrasena incorrectos.';
             }
         }
 

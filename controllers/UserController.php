@@ -24,32 +24,36 @@ class UserController extends Controller
         ];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            foreach ($formValues as $field => $value) {
-                $formValues[$field] = trim($_POST[$field] ?? '');
-            }
-
-            if ($formValues['usuario'] === '' || $formValues['contrasena'] === '' || $formValues['nombre'] === '' || $formValues['apellidoP'] === '' || $formValues['puesto'] === '' || $formValues['departamento'] === '' || $formValues['rol'] === '') {
-                $errorMessage = 'Completa todos los campos obligatorios.';
+            if (!$this->validateCsrfToken($_POST['csrf_token'] ?? null)) {
+                $errorMessage = 'Token de seguridad inválido.';
             } else {
-                $userModel = new User();
+                foreach ($formValues as $field => $value) {
+                    $formValues[$field] = trim($_POST[$field] ?? '');
+                }
 
-                if ($userModel->exists($formValues['usuario'])) {
-                    $errorMessage = 'El nombre de usuario ya existe. Elige otro diferente.';
-                } elseif ($userModel->create($formValues)) {
-                    $successMessage = 'Usuario creado correctamente.';
-                    $formValues = [
-                        'usuario' => '',
-                        'contrasena' => '',
-                        'nombre' => '',
-                        'apellidoP' => '',
-                        'apellidoM' => '',
-                        'sexo' => 'Masculino',
-                        'puesto' => '',
-                        'departamento' => '',
-                        'rol' => 'Usuario'
-                    ];
+                if ($formValues['usuario'] === '' || $formValues['contrasena'] === '' || $formValues['nombre'] === '' || $formValues['apellidoP'] === '' || $formValues['puesto'] === '' || $formValues['departamento'] === '' || $formValues['rol'] === '') {
+                    $errorMessage = 'Completa todos los campos obligatorios.';
                 } else {
-                    $errorMessage = 'No se pudo guardar el usuario en la base de datos.';
+                    $userModel = new User();
+
+                    if ($userModel->exists($formValues['usuario'])) {
+                        $errorMessage = 'El nombre de usuario ya existe. Elige otro diferente.';
+                    } elseif ($userModel->create($formValues)) {
+                        $successMessage = 'Usuario creado correctamente.';
+                        $formValues = [
+                            'usuario' => '',
+                            'contrasena' => '',
+                            'nombre' => '',
+                            'apellidoP' => '',
+                            'apellidoM' => '',
+                            'sexo' => 'Masculino',
+                            'puesto' => '',
+                            'departamento' => '',
+                            'rol' => 'Usuario'
+                        ];
+                    } else {
+                        $errorMessage = 'No se pudo guardar el usuario en la base de datos.';
+                    }
                 }
             }
         }

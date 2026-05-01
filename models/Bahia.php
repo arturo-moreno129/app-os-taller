@@ -139,4 +139,112 @@ class Bahia
         mysqli_stmt_close($stmt);
         return $records;
     }
+
+    public function getDashboardBays(): array
+    {
+        $defaultBays = [
+            'BAHIA 1' => [
+                'nombre_bahia' => 'BAHIA 1',
+                'os' => 'Sin OS',
+                'fecha_ingreso' => '',
+                'hora_ingreso' => '',
+                'cliente' => 'Sin cliente',
+                'motivo' => '',
+                'estatus' => 'Disponible',
+                'tecnico' => 'Sin asignar',
+                'estado' => 'Libre'
+            ],
+            'BAHIA 2' => [
+                'nombre_bahia' => 'BAHIA 2',
+                'os' => 'Sin OS',
+                'fecha_ingreso' => '',
+                'hora_ingreso' => '',
+                'cliente' => 'Sin cliente',
+                'motivo' => '',
+                'estatus' => 'Disponible',
+                'tecnico' => 'Sin asignar',
+                'estado' => 'Libre'
+            ],
+            'BAHIA 3' => [
+                'nombre_bahia' => 'BAHIA 3',
+                'os' => 'Sin OS',
+                'fecha_ingreso' => '',
+                'hora_ingreso' => '',
+                'cliente' => 'Sin cliente',
+                'motivo' => '',
+                'estatus' => 'Disponible',
+                'tecnico' => 'Sin asignar',
+                'estado' => 'Libre'
+            ],
+            'BAHIA 4' => [
+                'nombre_bahia' => 'BAHIA 4',
+                'os' => 'Sin OS',
+                'fecha_ingreso' => '',
+                'hora_ingreso' => '',
+                'cliente' => 'Sin cliente',
+                'motivo' => '',
+                'estatus' => 'Disponible',
+                'tecnico' => 'Sin asignar',
+                'estado' => 'Libre'
+            ],
+        ];
+
+        if (!$this->db) {
+            return array_values($defaultBays);
+        }
+
+        $query = "
+            SELECT
+                b.nombre_bahia,
+                b.os,
+                b.fecha_ingreso,
+                b.hora_ingreso,
+                b.cliente,
+                b.motivo,
+                b.estatus,
+                t.nombre AS tecnico
+            FROM bahias b
+            JOIN (
+                SELECT nombre_bahia, MAX(id_bahia) AS max_id
+                FROM bahias
+                GROUP BY nombre_bahia
+            ) latest ON latest.nombre_bahia = b.nombre_bahia
+                AND latest.max_id = b.id_bahia
+            LEFT JOIN bahia_tecnico bt
+                ON bt.id_bahia = b.id_bahia
+                AND bt.activo = 1
+            LEFT JOIN tecnicos t
+                ON t.id_tecnico = bt.id_tecnico
+            WHERE b.nombre_bahia IN ('BAHIA 1', 'BAHIA 2', 'BAHIA 3', 'BAHIA 4')
+            ORDER BY FIELD(b.nombre_bahia, 'BAHIA 1', 'BAHIA 2', 'BAHIA 3', 'BAHIA 4')
+        ";
+
+        $stmt = mysqli_prepare($this->db, $query);
+        if ($stmt) {
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $estado = stripos($row['estatus'], 'Disponible') !== false ? 'Libre' : 'Ocupado';
+                    $defaultBays[$row['nombre_bahia']] = [
+                        'nombre_bahia' => $row['nombre_bahia'],
+                        'os' => $row['os'] ?: 'Sin OS',
+                        'fecha_ingreso' => $row['fecha_ingreso'] ?: '',
+                        'hora_ingreso' => $row['hora_ingreso'] ?: '',
+                        'cliente' => $row['cliente'] ?: 'Sin cliente',
+                        'motivo' => $row['motivo'] ?: '',
+                        'estatus' => $row['estatus'] ?: 'Disponible',
+                        'tecnico' => $row['tecnico'] ?: 'Sin asignar',
+                        'estado' => $estado,
+                    ];
+                }
+                mysqli_free_result($result);
+            }
+
+            mysqli_stmt_close($stmt);
+        }
+
+        return array_values($defaultBays);
+    }
 }

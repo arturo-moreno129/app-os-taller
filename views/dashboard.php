@@ -1,4 +1,10 @@
-<?php /** @var string $nombreUsuario */ ?>
+<?php
+if (!defined('APP_INIT')) {
+    http_response_code(403);
+    exit('Acceso denegado.');
+}
+/** @var string $nombreUsuario */
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -33,7 +39,7 @@
         <div class="icon">🔧🚗</div>
         <div class="title">
           <h1>MONITOREO DE UNIDADES EN TALLER</h1>
-          <p>● Informacion en tiempo real</p>
+          <p>● Información en tiempo real</p>
         </div>
       </div>
 
@@ -43,86 +49,17 @@
       </div>
     </div>
 
-    <div class="bays">
-      <div class="bay bay-busy">
-        <div class="bay-header blue">
-          <span class="bay-title">
-            <img class="bay-header-car" src="assets/car_icon_path3.png" alt="Icono de bahia">
-            BAHIA 1
-          </span>
-          <span class="badge">2 UNIDADES</span>
-        </div>
-        <div class="bay-overview">
-          <span class="status-indicator" aria-hidden="true"></span>
-          <img class="bay-car-image" src="assets/icon_carro.png" alt="Unidad en bahia">
-          <p class="bay-status-text">En operación</p>
-        </div>
-        <div class="card">
-          <div class="os">OS-12459</div>
-          <div class="info">📅 21/05/2024 &nbsp;&nbsp; 🕒 09:40<br>👤 Cliente: Maria Gonzalez<br>📝 Motivo: Diagnostico de falla<br>🔧 Tecnico: PREVIAS</div>
-        </div>
-        <div class="available">🚗 Disponible para proxima unidad</div>
-      </div>
+    <?php
+      $bayColors = [
+          'BAHIA 1' => 'blue',
+          'BAHIA 2' => 'green',
+          'BAHIA 3' => 'orange',
+          'BAHIA 4' => 'purple',
+      ];
+    ?>
 
-      <div class="bay bay-busy">
-        <div class="bay-header green">
-          <span class="bay-title">
-            <img class="bay-header-car" src="assets/car_icon_path3.png" alt="Icono de bahia">
-            BAHIA 2
-          </span>
-          <span class="badge">2 UNIDADES</span>
-        </div>
-        <div class="bay-overview">
-          <span class="status-indicator" aria-hidden="true"></span>
-          <img class="bay-car-image" src="assets/icon_carro.png" alt="Unidad en bahia">
-          <p class="bay-status-text">En operación</p>
-        </div>
-        <div class="card">
-          <div class="os">OS-12461</div>
-          <div class="info">📅 21/05/2024 &nbsp;&nbsp; 🕒 10:05<br>👤 Cliente: Laura Sanchez<br>📝 Motivo: Cambio de aceite<br>🔧 Tecnico: Yair Hernandez Serrano</div>
-        </div>
-        <div class="available">🚗 Disponible para proxima unidad</div>
-      </div>
-
-      <div class="bay bay-busy">
-        <div class="bay-header orange">
-          <span class="bay-title">
-            <img class="bay-header-car" src="assets/car_icon_path3.png" alt="Icono de bahia">
-            BAHIA 3
-          </span>
-          <span class="badge">2 UNIDADES</span>
-        </div>
-        <div class="bay-overview">
-          <span class="status-indicator" aria-hidden="true"></span>
-          <img class="bay-car-image" src="assets/icon_carro.png" alt="Unidad en bahia">
-          <p class="bay-status-text">En operación</p>
-        </div>
-        <div class="card">
-          <div class="os">OS-12463</div>
-          <div class="info">📅 21/05/2024 &nbsp;&nbsp; 🕒 10:15<br>👤 Cliente: Veronica Lopez<br>📝 Motivo: Alineacion y balanceo<br>🔧 Tecnico: Alan Daniel Pluma Melendez</div>
-        </div>
-        <div class="available">🚗 Disponible para proxima unidad</div>
-      </div>
-
-      <div class="bay bay-free">
-        <div class="bay-header purple">
-          <span class="bay-title">
-            <img class="bay-header-car" src="assets/car_icon_path3.png" alt="Icono de bahia">
-            BAHIA 4
-          </span>
-          <span class="badge">1 UNIDAD</span>
-        </div>
-        <div class="bay-overview">
-          <span class="status-indicator" aria-hidden="true"></span>
-          <img class="bay-car-image" src="assets/icon_carro.png" alt="Unidad en bahia">
-          <p class="bay-status-text">Disponible</p>
-        </div>
-        <div class="card">
-          <div class="os">OS-12464</div>
-          <div class="info">📅 21/05/2024 &nbsp;&nbsp; 🕒 09:20<br>👤 Cliente: Carlos Molina<br>📝 Motivo: Electrico - Revision<br>🔧 Tecnico: Diego Herrera</div>
-        </div>
-        <div class="available">🚗 Disponible para proxima unidad</div>
-      </div>
+    <div class="bays" id="dashboardBays">
+      <?php include __DIR__ . '/dashboard-bays.php'; ?>
     </div>
 
     <div class="footer">

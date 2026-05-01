@@ -20,6 +20,43 @@ if (timeElement && dateElement) {
     setInterval(updateClock, 1000);
 }
 
+const dashboardBays = document.getElementById('dashboardBays');
+const refreshStatus = document.getElementById('dashboardRefreshTime');
+
+async function refreshDashboardData() {
+    if (!dashboardBays) {
+        return;
+    }
+
+    try {
+        const response = await fetch('index.php?action=dashboard_data', {
+            cache: 'no-store',
+        });
+
+        if (!response.ok) {
+            throw new Error('HTTP ' + response.status);
+        }
+
+        const html = await response.text();
+        dashboardBays.innerHTML = html;
+
+        if (refreshStatus) {
+            refreshStatus.textContent = 'Última actualización: ' + new Date().toLocaleTimeString('es-MX', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+            });
+        }
+    } catch (error) {
+        console.warn('Error actualizando dashboard:', error);
+    }
+}
+
+if (dashboardBays) {
+    refreshDashboardData();
+    setInterval(refreshDashboardData, 10000);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.getElementById('menuToggle') || document.querySelector('.menu-toggle');
     const sideMenu = document.getElementById('sideMenu');

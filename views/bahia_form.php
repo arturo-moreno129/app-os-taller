@@ -3,7 +3,13 @@
 <?php /** @var array $formValues */ ?>
 <?php /** @var array $tecnicos */ ?>
 <?php /** @var array $ultimosRegistros */ ?>
-<?php /** @var string $nombreUsuario */ ?>
+<?php
+if (!defined('APP_INIT')) {
+    http_response_code(403);
+    exit('Acceso denegado.');
+}
+/** @var string $nombreUsuario */
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -64,6 +70,7 @@
         <?php endif; ?>
 
         <form method="post" action="index.php?action=alta_bahias" class="form-grid">
+          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
           <div class="field">
             <label for="nombre_bahia">Nombre de la bahia</label>
             <select id="nombre_bahia" name="nombre_bahia" required>

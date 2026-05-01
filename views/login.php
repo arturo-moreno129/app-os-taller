@@ -1,4 +1,10 @@
-<?php /** @var string $errorMessage */ ?>
+<?php
+if (!defined('APP_INIT')) {
+    http_response_code(403);
+    exit('Acceso denegado.');
+}
+/** @var string $errorMessage */
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -21,6 +27,7 @@
     <?php endif; ?>
 
     <form class="login-form" id="loginForm" method="post" action="index.php?action=login">
+      <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
       <div class="field">
         <label for="usuario">Usuario</label>
         <input type="text" id="usuario" name="usuario" placeholder="Escribe tu usuario" value="<?= htmlspecialchars($_POST['usuario'] ?? '', ENT_QUOTES, 'UTF-8') ?>" required>

@@ -5,7 +5,9 @@ class LogoutController extends Controller
 {
     public function index(): void
     {
-        session_start();
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
         $_SESSION = [];
 
         if (ini_get('session.use_cookies')) {

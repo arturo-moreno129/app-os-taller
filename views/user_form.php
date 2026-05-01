@@ -1,7 +1,13 @@
 <?php /** @var string $successMessage */ ?>
 <?php /** @var string $errorMessage */ ?>
 <?php /** @var array $formValues */ ?>
-<?php /** @var string $nombreUsuario */ ?>
+<?php
+if (!defined('APP_INIT')) {
+    http_response_code(403);
+    exit('Acceso denegado.');
+}
+/** @var string $nombreUsuario */
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -58,6 +64,7 @@
         <?php endif; ?>
 
         <form method="post" action="index.php?action=alta_usuario" class="form-grid">
+          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
           <div class="field">
             <label for="usuario">Usuario *</label>
             <input type="text" id="usuario" name="usuario" placeholder="Nombre de usuario" value="<?= htmlspecialchars($formValues['usuario'], ENT_QUOTES, 'UTF-8') ?>" required>

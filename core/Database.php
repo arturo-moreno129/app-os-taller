@@ -25,6 +25,7 @@ class Database
             return null;
         }
 
+        mysqli_set_charset($connection, 'utf8mb4');
         self::$connection = $connection;
         return self::$connection;
     }
