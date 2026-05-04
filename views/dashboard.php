@@ -49,6 +49,14 @@ if (!defined('APP_INIT')) {
       </div>
     </div>
 
+    <?php if (!empty($successMessage)): ?>
+      <div class="success-message"><?= htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8') ?></div>
+    <?php endif; ?>
+
+    <?php if (!empty($errorMessage)): ?>
+      <div class="error-message"><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?></div>
+    <?php endif; ?>
+
     <?php
       $bayColors = [
           'BAHIA 1' => 'blue',

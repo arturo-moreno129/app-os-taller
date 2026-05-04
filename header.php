@@ -13,6 +13,7 @@
     <a class="side-menu__link" href="index.php?action=dashboard">Panel principal</a>
     <a class="side-menu__link" href="index.php?action=alta_bahias">Alta de bahias</a>
     <a class="side-menu__link" href="index.php?action=alta_usuario">Alta de usuario</a>
+    <a class="side-menu__link" href="index.php?action=concluir_bahias">Concluir bahías</a>
     <a class="side-menu__link" href="#">Ordenes de servicio</a>
     <a class="side-menu__link" href="#">Tecnicos</a>
     <a class="side-menu__link" href="#">Reportes</a>

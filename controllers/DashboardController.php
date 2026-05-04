@@ -34,10 +34,16 @@ class DashboardController extends Controller
             return;
         }
 
+        $successMessage = $_SESSION['dashboard_success'] ?? '';
+        $errorMessage = $_SESSION['dashboard_error'] ?? '';
+        unset($_SESSION['dashboard_success'], $_SESSION['dashboard_error']);
+
         $this->render('dashboard.php', [
             'nombreUsuario' => $nombreUsuario,
             'bays' => $bays,
             'bayColors' => $bayColors,
+            'successMessage' => $successMessage,
+            'errorMessage' => $errorMessage,
         ]);
     }
 }

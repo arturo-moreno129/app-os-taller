@@ -358,6 +358,38 @@ body.menu-open {
     flex: 1 1 50%;
 }
 
+.bay-action-form {
+    padding: 12px 18px 18px;
+}
+
+.bay-action-button {
+    width: 100%;
+    padding: 12px 14px;
+    border: 0;
+    border-radius: 12px;
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.bay-action-button:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.bay-empty-message {
+    grid-column: 1 / -1;
+    padding: 32px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #e2e8f0;
+    text-align: center;
+    font-size: 18px;
+}
+
 .status-indicator {
     position: absolute;
     top: 12px;
@@ -418,6 +450,61 @@ body.menu-open {
     font-size: 15px;
     border-top: 1px solid #e2e8f0;
     background: #fff;
+}
+
+.conclude-module {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.conclude-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    color: #f8fbff;
+}
+
+.conclude-table th,
+.conclude-table td {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 14px 12px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.conclude-table th {
+    background: rgba(255, 255, 255, 0.06);
+    color: #cbd5e1;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.conclude-form {
+    display: inline-block;
+}
+
+.button--small {
+    padding: 10px 14px;
+    border: 0;
+    border-radius: 12px;
+    background: #2563eb;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.button--small:hover {
+    background: #1d4ed8;
+}
+
+.info-message {
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    color: #e2e8f0;
+    font-size: 16px;
+    text-align: center;
 }
 
 .footer {

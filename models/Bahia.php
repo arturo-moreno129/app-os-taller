@@ -140,6 +140,140 @@ class Bahia
         return $records;
     }
 
+    public function findActiveBays(): array
+    {
+        if (!$this->db) {
+            return [];
+        }
+
+        $query = "
+            SELECT
+                b.id_bahia,
+                b.nombre_bahia,
+                b.os,
+                b.fecha_ingreso,
+                b.hora_ingreso,
+                b.cliente,
+                b.motivo,
+                b.estatus,
+                t.id_tecnico,
+                t.nombre AS tecnico
+            FROM bahias b
+            LEFT JOIN bahia_tecnico bt
+                ON bt.id_bahia = b.id_bahia
+                AND bt.activo = 1
+            LEFT JOIN tecnicos t
+                ON t.id_tecnico = bt.id_tecnico
+            JOIN (
+                SELECT nombre_bahia, MAX(id_bahia) AS max_id
+                FROM bahias
+                GROUP BY nombre_bahia
+            ) latest ON latest.nombre_bahia = b.nombre_bahia
+                AND latest.max_id = b.id_bahia
+            WHERE b.estatus <> 'Disponible'
+            ORDER BY FIELD(b.nombre_bahia, 'BAHIA 1', 'BAHIA 2', 'BAHIA 3', 'BAHIA 4')
+        ";
+
+        $stmt = mysqli_prepare($this->db, $query);
+        if (!$stmt) {
+            return [];
+        }
+
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $records = [];
+
+        if ($result) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $records[] = $row;
+            }
+            mysqli_free_result($result);
+        }
+
+        mysqli_stmt_close($stmt);
+        return $records;
+    }
+
+    public function concludeBay(string $nombreBahia): array
+    {
+        if (!$this->db) {
+            return [false, 'No fue posible conectar con la base de datos.'];
+        }
+
+        $query = "
+            SELECT b.id_bahia, b.estatus, bt.id_tecnico
+            FROM bahias b
+            LEFT JOIN bahia_tecnico bt
+                ON bt.id_bahia = b.id_bahia
+                AND bt.activo = 1
+            WHERE b.nombre_bahia = ?
+            ORDER BY b.id_bahia DESC
+            LIMIT 1
+        ";
+
+        $stmt = mysqli_prepare($this->db, $query);
+
+        if (!$stmt) {
+            return [false, 'No se pudo preparar la consulta de bahía.'];
+        }
+
+        mysqli_stmt_bind_param($stmt, 's', $nombreBahia);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $latest = $result ? mysqli_fetch_assoc($result) : null;
+        mysqli_stmt_close($stmt);
+
+        if (!$latest) {
+            return [false, 'No se encontró la bahía solicitada.'];
+        }
+
+        if (stripos($latest['estatus'], 'Disponible') !== false) {
+            return [false, 'La bahía ya está disponible.'];
+        }
+
+        mysqli_begin_transaction($this->db);
+
+        try {
+            $updateBahia = mysqli_prepare($this->db, "UPDATE bahias SET estatus = 'Disponible' WHERE id_bahia = ?");
+            if (!$updateBahia) {
+                throw new Exception('No se pudo preparar la actualización del estado de la bahía.');
+            }
+            mysqli_stmt_bind_param($updateBahia, 'i', $latest['id_bahia']);
+            if (!mysqli_stmt_execute($updateBahia)) {
+                throw new Exception('No se pudo actualizar el estado de la bahía.');
+            }
+            mysqli_stmt_close($updateBahia);
+
+            if (!empty($latest['id_tecnico'])) {
+                $updateAsignacion = mysqli_prepare($this->db, "UPDATE bahia_tecnico SET activo = 0 WHERE id_bahia = ? AND id_tecnico = ?");
+                if (!$updateAsignacion) {
+                    throw new Exception('No se pudo preparar la actualización de asignación.');
+                }
+                mysqli_stmt_bind_param($updateAsignacion, 'ii', $latest['id_bahia'], $latest['id_tecnico']);
+                if (!mysqli_stmt_execute($updateAsignacion)) {
+                    throw new Exception('No se pudo actualizar la asignación del técnico.');
+                }
+                mysqli_stmt_close($updateAsignacion);
+
+                $updateTecnico = mysqli_prepare($this->db, "UPDATE tecnicos SET estatus = 'Libre' WHERE id_tecnico = ?");
+                if (!$updateTecnico) {
+                    throw new Exception('No se pudo preparar la actualización del técnico.');
+                }
+                mysqli_stmt_bind_param($updateTecnico, 'i', $latest['id_tecnico']);
+                if (!mysqli_stmt_execute($updateTecnico)) {
+                    throw new Exception('No se pudo actualizar el estatus del técnico.');
+                }
+                mysqli_stmt_close($updateTecnico);
+            }
+
+            mysqli_commit($this->db);
+            return [true, 'Bahía marcada como disponible con éxito.'];
+        } catch (Exception $exception) {
+            mysqli_rollback($this->db);
+            return [false, $exception->getMessage()];
+        }
+    }
+
     public function getDashboardBays(): array
     {
         $defaultBays = [
@@ -226,17 +360,17 @@ class Bahia
 
             if ($result) {
                 while ($row = mysqli_fetch_assoc($result)) {
-                    $estado = stripos($row['estatus'], 'Disponible') !== false ? 'Libre' : 'Ocupado';
+                    $isDisponible = stripos($row['estatus'], 'Disponible') !== false;
                     $defaultBays[$row['nombre_bahia']] = [
                         'nombre_bahia' => $row['nombre_bahia'],
-                        'os' => $row['os'] ?: 'Sin OS',
-                        'fecha_ingreso' => $row['fecha_ingreso'] ?: '',
-                        'hora_ingreso' => $row['hora_ingreso'] ?: '',
-                        'cliente' => $row['cliente'] ?: 'Sin cliente',
-                        'motivo' => $row['motivo'] ?: '',
-                        'estatus' => $row['estatus'] ?: 'Disponible',
-                        'tecnico' => $row['tecnico'] ?: 'Sin asignar',
-                        'estado' => $estado,
+                        'os' => $isDisponible ? 'Sin OS' : ($row['os'] ?: 'Sin OS'),
+                        'fecha_ingreso' => $isDisponible ? '' : ($row['fecha_ingreso'] ?: ''),
+                        'hora_ingreso' => $isDisponible ? '' : ($row['hora_ingreso'] ?: ''),
+                        'cliente' => $isDisponible ? 'Sin cliente' : ($row['cliente'] ?: 'Sin cliente'),
+                        'motivo' => $isDisponible ? '' : ($row['motivo'] ?: ''),
+                        'estatus' => $isDisponible ? 'Disponible' : ($row['estatus'] ?: 'Disponible'),
+                        'tecnico' => $isDisponible ? 'Sin asignar' : ($row['tecnico'] ?: 'Sin asignar'),
+                        'estado' => $isDisponible ? 'Libre' : 'Ocupado',
                     ];
                 }
                 mysqli_free_result($result);

@@ -2,6 +2,7 @@
 define('APP_INIT', true);
 require_once __DIR__ . '/controllers/LoginController.php';
 require_once __DIR__ . '/controllers/DashboardController.php';
+require_once __DIR__ . '/controllers/ConcludeBahiaController.php';
 require_once __DIR__ . '/controllers/UserController.php';
 require_once __DIR__ . '/controllers/BahiaController.php';
 require_once __DIR__ . '/controllers/LogoutController.php';
@@ -12,6 +13,8 @@ $routes = [
     'login' => LoginController::class,
     'dashboard' => DashboardController::class,
     'dashboard_data' => DashboardController::class,
+    'concluir_bahias' => ConcludeBahiaController::class,
+    'concluir_bahia' => ConcludeBahiaController::class,
     'alta_usuario' => UserController::class,
     'alta_bahias' => BahiaController::class,
     'logout' => LogoutController::class,
