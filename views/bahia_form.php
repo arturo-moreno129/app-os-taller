@@ -2,6 +2,7 @@
 <?php /** @var string $errorMessage */ ?>
 <?php /** @var array $formValues */ ?>
 <?php /** @var array $tecnicos */ ?>
+<?php /** @var array $bahiasDisponibles */ ?>
 <?php /** @var array $ultimosRegistros */ ?>
 <?php
 if (!defined('APP_INIT')) {
@@ -75,7 +76,7 @@ if (!defined('APP_INIT')) {
             <label for="nombre_bahia">Nombre de la bahia</label>
             <select id="nombre_bahia" name="nombre_bahia" required>
               <option value="">Selecciona una bahia</option>
-              <?php foreach ($bahiasDisponibles = ['BAHIA 1', 'BAHIA 2', 'BAHIA 3', 'BAHIA 4'] as $bahiaDisponible): ?>
+              <?php foreach ($bahiasDisponibles as $bahiaDisponible): ?>
                 <option value="<?= htmlspecialchars($bahiaDisponible, ENT_QUOTES, 'UTF-8') ?>" <?= $formValues['nombre_bahia'] === $bahiaDisponible ? 'selected' : '' ?>>
                   <?= htmlspecialchars($bahiaDisponible, ENT_QUOTES, 'UTF-8') ?>
                 </option>
@@ -88,14 +89,7 @@ if (!defined('APP_INIT')) {
             <input type="text" id="os" name="os" placeholder="Ej. OS-12465" value="<?= htmlspecialchars($formValues['os'], ENT_QUOTES, 'UTF-8') ?>" required>
           </div>
 
-          <div class="field">
-            <label for="estatus">Estatus de la bahia</label>
-            <select id="estatus" name="estatus" required>
-              <?php foreach (['Disponible', 'En operación', 'En mantenimiento'] as $statusOption): ?>
-                <option value="<?= htmlspecialchars($statusOption, ENT_QUOTES, 'UTF-8') ?>" <?= $formValues['estatus'] === $statusOption ? 'selected' : '' ?>><?= htmlspecialchars($statusOption, ENT_QUOTES, 'UTF-8') ?></option>
-              <?php endforeach; ?>
-            </select>
-          </div>
+          <input type="hidden" name="estatus" value="En operación">
 
           <div class="field">
             <label for="id_tecnico">Tecnico</label>

@@ -194,6 +194,50 @@ class Bahia
         return $records;
     }
 
+    public function getAvailableBays(): array
+    {
+        if (!$this->db) {
+            return [];
+        }
+
+        // Bahías fijas disponibles
+        $allBays = ['BAHIA 1', 'BAHIA 2', 'BAHIA 3', 'BAHIA 4'];
+
+        // Obtener bahías ocupadas (último registro por bahía con estatus no disponible)
+        $query = "
+            SELECT DISTINCT b.nombre_bahia
+            FROM bahias b
+            JOIN (
+                SELECT nombre_bahia, MAX(id_bahia) AS max_id
+                FROM bahias
+                GROUP BY nombre_bahia
+            ) latest ON latest.nombre_bahia = b.nombre_bahia
+                AND latest.max_id = b.id_bahia
+            WHERE b.estatus <> 'Disponible'
+        ";
+
+        $stmt = mysqli_prepare($this->db, $query);
+        if (!$stmt) {
+            return $allBays; // Si hay error, devolver todas como disponibles
+        }
+
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $occupiedBays = [];
+
+        if ($result) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $occupiedBays[] = $row['nombre_bahia'];
+            }
+            mysqli_free_result($result);
+        }
+
+        mysqli_stmt_close($stmt);
+
+        // Filtrar bahías disponibles
+        return array_diff($allBays, $occupiedBays);
+    }
+
     public function concludeBay(string $nombreBahia): array
     {
         if (!$this->db) {

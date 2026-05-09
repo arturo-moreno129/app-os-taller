@@ -26,7 +26,12 @@ class BahiaController extends Controller
         $technicianModel = new Technician();
         $bahiaModel = new Bahia();
         $tecnicos = $technicianModel->findAll();
+        $bahiasDisponibles = $bahiaModel->getAvailableBays();
         $ultimosRegistros = $bahiaModel->getRecent(5);
+
+        if (empty($bahiasDisponibles)) {
+            $errorMessage = 'No hay bahías disponibles en este momento. Todas las bahías están ocupadas.';
+        }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$this->validateCsrfToken($_POST['csrf_token'] ?? null)) {
@@ -38,6 +43,8 @@ class BahiaController extends Controller
 
                 if ($formValues['nombre_bahia'] === '' || $formValues['os'] === '' || $formValues['fecha'] === '' || $formValues['hora'] === '' || $formValues['cliente'] === '' || $formValues['id_tecnico'] === '') {
                     $errorMessage = 'Completa todos los campos obligatorios.';
+                } elseif (!in_array($formValues['nombre_bahia'], $bahiasDisponibles)) {
+                    $errorMessage = 'La bahía seleccionada ya no está disponible.';
                 } else {
                     $createdBy = isset($_SESSION['id_usuario']) ? (int) $_SESSION['id_usuario'] : 0;
 
@@ -65,6 +72,7 @@ class BahiaController extends Controller
                             'motivo' => '',
                             'id_tecnico' => ''
                         ];
+                        $bahiasDisponibles = $bahiaModel->getAvailableBays();
                         $ultimosRegistros = $bahiaModel->getRecent(5);
                     } else {
                         $errorMessage = $message;
@@ -72,6 +80,9 @@ class BahiaController extends Controller
                 }
             }
         }
+
+        // Actualizar bahías disponibles después del procesamiento
+        $bahiasDisponibles = $bahiaModel->getAvailableBays();
 
         $nombreUsuario = trim(($_SESSION['nombre'] ?? '') . ' ' . ($_SESSION['apellidoP'] ?? ''));
         if ($nombreUsuario === '') {
@@ -83,6 +94,7 @@ class BahiaController extends Controller
             'errorMessage' => $errorMessage,
             'formValues' => $formValues,
             'tecnicos' => $tecnicos,
+            'bahiasDisponibles' => $bahiasDisponibles,
             'ultimosRegistros' => $ultimosRegistros,
             'nombreUsuario' => $nombreUsuario
         ]);

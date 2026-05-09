@@ -39,7 +39,12 @@ if (!defined('APP_INIT')) {
         <div class="icon">🔧🚗</div>
         <div class="title">
           <h1>MONITOREO DE UNIDADES EN TALLER</h1>
-          <p>● Información en tiempo real</p>
+          <div class="title-status">
+            <div class="status-pill">
+              <span class="status-dot"></span>
+              Información en tiempo real
+            </div>
+          </div>
         </div>
       </div>
 

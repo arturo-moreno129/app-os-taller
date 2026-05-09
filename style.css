@@ -18,7 +18,10 @@
 }
 
 body {
-    background: #0a1220;
+    background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 26%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.14), transparent 20%),
+        linear-gradient(180deg, #07121f 0%, #081726 48%, #07111d 100%);
     display: flex;
     justify-content: center;
     align-items: stretch;
@@ -127,15 +130,26 @@ body.menu-open {
 .dashboard {
     width: 100%;
     max-width: 1920px;
-    background: #07111d;
-    border: 4px solid #111;
-    border-radius: var(--panel-radius);
-    padding: var(--dashboard-padding);
+    background: linear-gradient(180deg, rgba(8, 20, 35, 0.96), rgba(7, 17, 29, 1));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: calc(var(--panel-radius) + 6px);
+    padding: calc(var(--dashboard-padding) + 4px);
     color: white;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, .4);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .42);
     min-height: calc(100vh - (var(--page-gap) * 2));
     display: flex;
     flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.05), transparent 24%);
+    pointer-events: none;
 }
 
 .top-bar {
@@ -241,6 +255,12 @@ body.menu-open {
     text-transform: uppercase;
 }
 
+.title-status {
+    display: grid;
+    gap: 10px;
+    margin-top: 10px;
+}
+
 .title p {
     font-size: 15px;
     color: #b9d8ff;
@@ -273,34 +293,63 @@ body.menu-open {
     flex: 1;
 }
 
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(30, 64, 175, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.18);
+    color: #d8e8ff;
+    font-weight: 700;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
+}
+
+.refresh-info {
+    font-size: 14px;
+    color: #cbd5e1;
+}
+
 .bay {
     background: #ffffff;
-    border-radius: 14px;
+    border-radius: 20px;
     overflow: hidden;
-    color: #222;
+    color: #172334;
     min-height: 0;
     display: flex;
     flex-direction: column;
-    border: 1px solid #dbe6f7;
+    border: 1px solid rgba(15, 52, 89, 0.12);
     position: relative;
+    box-shadow: 0 18px 32px rgba(15, 40, 80, 0.12);
 }
 
 .bay-header {
-    color: white;
-    font-weight: bold;
-    padding: 14px 18px;
+    color: #ffffff;
+    font-weight: 800;
+    padding: 20px 22px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     font-size: 18px;
     flex-wrap: wrap;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    min-height: 72px;
 }
 
 .bay-title {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .bay-header-car {
@@ -328,21 +377,23 @@ body.menu-open {
 }
 
 .badge {
-    background: rgba(255, 255, 255, .9);
-    color: #222;
-    padding: 6px 10px;
-    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.96);
+    color: #1f2937;
+    padding: 8px 14px;
+    border-radius: 999px;
     font-size: 13px;
-    font-weight: bold;
+    font-weight: 800;
+    border: 1px solid rgba(15, 52, 89, 0.12);
 }
 
 .card {
-    padding: 18px;
-    border-bottom: 1px solid #ddd;
+    padding: 20px 22px 18px;
+    border-bottom: 1px solid #ebeff5;
     flex: 1 1 50%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    background: #fbfcff;
 }
 
 .bay-overview {
@@ -352,10 +403,11 @@ body.menu-open {
     align-items: center;
     justify-content: center;
     gap: 12px;
-    padding: 22px 18px 16px;
+    padding: 26px 18px 18px;
     text-align: center;
     width: 100%;
     flex: 1 1 50%;
+    background: #f7f9ff;
 }
 
 .bay-action-form {
@@ -392,13 +444,13 @@ body.menu-open {
 
 .status-indicator {
     position: absolute;
-    top: 12px;
-    left: 14px;
-    width: 20px;
-    height: 20px;
+    top: 16px;
+    left: 16px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     z-index: 2;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.75);
+    box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.7);
 }
 
 .bay-busy .status-indicator {
@@ -406,12 +458,12 @@ body.menu-open {
 }
 
 .bay-free .status-indicator {
-    background: #fbbf24;
+    background: #f59e0b;
 }
 
 .bay-car-image {
     display: block;
-    width: 132px;
+    width: 134px;
     max-width: 100%;
     height: auto;
     object-fit: contain;
@@ -423,9 +475,9 @@ body.menu-open {
     width: 100%;
     text-align: center;
     font-size: 21px;
-    line-height: 1.15;
+    line-height: 1.25;
     color: #1f2937;
-    font-weight: 500;
+    font-weight: 700;
 }
 
 .os {
@@ -444,12 +496,12 @@ body.menu-open {
 
 .available {
     margin-top: auto;
-    padding: 25px;
+    padding: 22px;
     text-align: center;
-    color: #555;
+    color: #475569;
     font-size: 15px;
-    border-top: 1px solid #e2e8f0;
-    background: #fff;
+    border-top: 1px solid #e7eef8;
+    background: #ffffff;
 }
 
 .conclude-module {
